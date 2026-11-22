@@ -918,7 +918,7 @@ fn write_draws(dir: &std::path::Path, draws: &[((usize, Vec<usize>, usize, u8), 
     let sdir = dir.join("shaders");
     let _ = std::fs::create_dir_all(&sdir);
     let mut out = String::new();
-    let mut shader = |code: usize| -> String {
+    let shader = |code: usize| -> String {
         if code == 0 {
             return "-".into();
         }

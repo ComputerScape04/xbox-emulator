@@ -371,7 +371,7 @@ pub unsafe fn create_gfx(this: *mut DeviceWrapper, real_dev: *mut c_void, pdesc:
     let owned = unsafe { snapshot(pdesc, num_ext, pext) }?;
     let rd = real_dev as usize;
     let ph_head = head.to_vec();
-    unsafe { launch(this, owned, num_ext, riid, ppv, sync, Kind::Graphics, &mut || unsafe { create_placeholder(rd as *mut c_void, &ph_head, &IID_PSO) }) }
+    unsafe { launch(this, owned, num_ext, riid, ppv, sync, Kind::Graphics, &mut || create_placeholder(rd as *mut c_void, &ph_head, &IID_PSO)) }
 }
 
 pub unsafe fn create_compute(this: *mut DeviceWrapper, real_dev: *mut c_void, pdesc: *const u8, num_ext: u32, pext: *const u8, riid: *const Guid, ppv: *mut *mut c_void, sync: CreateFn) -> Option<i32> {
@@ -381,7 +381,7 @@ pub unsafe fn create_compute(this: *mut DeviceWrapper, real_dev: *mut c_void, pd
     let owned = unsafe { snapshot_compute(pdesc, num_ext, pext) }?;
     let rd = real_dev as usize;
     let root = owned.root;
-    unsafe { launch(this, owned, num_ext, riid, ppv, sync, Kind::Compute, &mut || unsafe { create_compute_placeholder(rd as *mut c_void, root as *mut c_void) }) }
+    unsafe { launch(this, owned, num_ext, riid, ppv, sync, Kind::Compute, &mut || create_compute_placeholder(rd as *mut c_void, root as *mut c_void)) }
 }
 
 unsafe fn snapshot_compute(pdesc: *const u8, num_ext: u32, pext: *const u8) -> Option<Owned> {
