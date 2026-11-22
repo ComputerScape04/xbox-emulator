@@ -246,6 +246,7 @@ static BAD: AtomicU64 = AtomicU64::new(0);
 static WRITES: AtomicU64 = AtomicU64::new(0);
 static TRUNC: AtomicU64 = AtomicU64::new(0);
 
+#[allow(dead_code)]
 struct Lock<'a>(&'a File, [usize; 4], std::sync::MutexGuard<'a, ()>);
 
 impl<'a> Lock<'a> {

@@ -7,7 +7,6 @@ use std::fmt::Write as _;
 pub const GS_ALLOC_REQ: u32 = 9;
 pub const EXP_PRIM: u32 = 20;
 pub const MS_LDS_DWORDS: usize = 7167;
-pub const AS_ABI_UNKNOWN: &str = "amplification shader: the console AS (xgs12_10 0xde6f0) gets s[0:1] = user-data block, s2 = mesh-args ring >> 8, s3 = payload ring >> 8 and gid.x offset by COMPUTE_START_X, and leaves through global memory stores into those rings; the translator has no global-store path and the per-entry ring addressing and the mesh shader's payload register are not decoded";
 
 pub fn wave_size(insns: &[Insn]) -> u32 {
     let w64 = insns.iter().any(|i| {

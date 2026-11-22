@@ -969,7 +969,7 @@ fn f2h(x: f32) -> u32 {
     if a >= 65520.0 {
         return s | 0x7c00;
     }
-    let mut best = 0u32;
+    let best;
     let mut lo = 0u32;
     let mut hi = 0x7c00u32;
     while lo < hi {
