@@ -35,6 +35,7 @@ mod mixed;
 mod mimg_d16;
 mod atomic;
 mod user_data;
+pub mod infer;
 use mimg_d16::{mimg_data_regs, Lane};
 
 pub struct Translated {
@@ -1000,6 +1001,13 @@ pub fn translate(ex: &ShaderExtract) -> Result<Translated, String> {
 }
 
 pub fn translate_linked(ex: &ShaderExtract, feeds_ps: Option<&InputInterp>) -> Result<Translated, String> {
+    if ex.root_sig.is_none() && std::env::var_os("TOMBOX_INFER_ROOT_SIG").is_some() {
+        if let Ok(sig) = infer::infer_root_signature(ex) {
+            let mut inferred = ex.clone();
+            inferred.root_sig = Some(sig);
+            return translate_linked(&inferred, feeds_ps);
+        }
+    }
     translate_linked_with(ex, feeds_ps, false)
 }
 
@@ -1009,6 +1017,17 @@ pub fn translate_user_data(ex: &ShaderExtract) -> Result<Translated, String> {
 
 pub fn translate_linked_user_data(ex: &ShaderExtract, feeds_ps: Option<&InputInterp>) -> Result<Translated, String> {
     translate_linked_with(ex, feeds_ps, true)
+}
+
+pub fn translate_with_inference(ex: &ShaderExtract) -> Result<Translated, String> {
+    if ex.root_sig.is_some() || ex.has_root_sig {
+        return translate(ex);
+    }
+    let mut inferred = ex.clone();
+    if let Ok(sig) = infer::infer_root_signature(ex) {
+        inferred.root_sig = Some(sig);
+    }
+    translate(&inferred)
 }
 
 fn translate_linked_with(ex: &ShaderExtract, feeds_ps: Option<&InputInterp>, user_data: bool) -> Result<Translated, String> {
