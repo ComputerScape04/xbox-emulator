@@ -134,6 +134,9 @@ fn export_writes_out_param() {
 
 #[test]
 fn production_event_blob_matches_console_image() {
+    if !cfg!(has_wldp_blobs) {
+        return;
+    }
     assert_eq!(&tlg::PRODUCTION_EVENT_DESC[..3], &[0x0b, 5, 0]);
     assert_eq!(tlg::desc_keyword(tlg::PRODUCTION_EVENT_DESC), 0x8000_0000_0000);
     let Ok(dll) = std::fs::read(TM_WLDP) else { return };

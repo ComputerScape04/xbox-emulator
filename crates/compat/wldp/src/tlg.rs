@@ -69,23 +69,85 @@ extern "system" {
     fn EventWriteTransfer(handle: u64, desc: *const EventDescriptor, activity: *const Guid, related: *const Guid, count: u32, data: *const EventData) -> u32;
 }
 
+#[cfg(has_wldp_blobs)]
 pub const ACTIVITY_GUID: &[u8; 16] = include_bytes!("../data/activity_provider_guid.bin");
-pub const ACTIVITY_META: &[u8] = include_bytes!("../data/activity_provider_meta.bin");
-pub const STATE_GUID: &[u8; 16] = include_bytes!("../data/state_provider_guid.bin");
-pub const STATE_META: &[u8] = include_bytes!("../data/state_provider_meta.bin");
-pub const WDAC_EVENT_DESC: &[u8; 11] = include_bytes!("../data/wdac_event_desc.bin");
-pub const WDAC_EVENT_META: &[u8] = include_bytes!("../data/wdac_event_meta.bin");
-pub const BLOCKLIST_EVENT_DESC: &[u8; 11] = include_bytes!("../data/blocklist_event_desc.bin");
-pub const BLOCKLIST_EVENT_META: &[u8] = include_bytes!("../data/blocklist_event_meta.bin");
+#[cfg(not(has_wldp_blobs))]
+pub const ACTIVITY_GUID: &[u8; 16] = &[0u8; 16];
 
+#[cfg(has_wldp_blobs)]
+pub const ACTIVITY_META: &[u8] = include_bytes!("../data/activity_provider_meta.bin");
+#[cfg(not(has_wldp_blobs))]
+pub const ACTIVITY_META: &[u8] = &[2u8, 0u8];
+
+#[cfg(has_wldp_blobs)]
+pub const STATE_GUID: &[u8; 16] = include_bytes!("../data/state_provider_guid.bin");
+#[cfg(not(has_wldp_blobs))]
+pub const STATE_GUID: &[u8; 16] = &[0u8; 16];
+
+#[cfg(has_wldp_blobs)]
+pub const STATE_META: &[u8] = include_bytes!("../data/state_provider_meta.bin");
+#[cfg(not(has_wldp_blobs))]
+pub const STATE_META: &[u8] = &[2u8, 0u8];
+
+#[cfg(has_wldp_blobs)]
+pub const WDAC_EVENT_DESC: &[u8; 11] = include_bytes!("../data/wdac_event_desc.bin");
+#[cfg(not(has_wldp_blobs))]
+pub const WDAC_EVENT_DESC: &[u8; 11] = &[0u8; 11];
+
+#[cfg(has_wldp_blobs)]
+pub const WDAC_EVENT_META: &[u8] = include_bytes!("../data/wdac_event_meta.bin");
+#[cfg(not(has_wldp_blobs))]
+pub const WDAC_EVENT_META: &[u8] = &[2u8, 0u8];
+
+#[cfg(has_wldp_blobs)]
+pub const BLOCKLIST_EVENT_DESC: &[u8; 11] = include_bytes!("../data/blocklist_event_desc.bin");
+#[cfg(not(has_wldp_blobs))]
+pub const BLOCKLIST_EVENT_DESC: &[u8; 11] = &[0u8; 11];
+
+#[cfg(has_wldp_blobs)]
+pub const BLOCKLIST_EVENT_META: &[u8] = include_bytes!("../data/blocklist_event_meta.bin");
+#[cfg(not(has_wldp_blobs))]
+pub const BLOCKLIST_EVENT_META: &[u8] = &[2u8, 0u8];
+
+#[cfg(has_wldp_blobs)]
 pub const WATERMARK_GUID: &[u8; 16] = include_bytes!("../data/watermark_provider_guid.bin");
+#[cfg(not(has_wldp_blobs))]
+pub const WATERMARK_GUID: &[u8; 16] = &[0u8; 16];
+
+#[cfg(has_wldp_blobs)]
 pub const WATERMARK_META: &[u8] = include_bytes!("../data/watermark_provider_meta.bin");
+#[cfg(not(has_wldp_blobs))]
+pub const WATERMARK_META: &[u8] = &[2u8, 0u8];
+
+#[cfg(has_wldp_blobs)]
 pub const RETAIL_UNLOCKED_EVENT_DESC: &[u8; 11] = include_bytes!("../data/retail_unlocked_event_desc.bin");
+#[cfg(not(has_wldp_blobs))]
+pub const RETAIL_UNLOCKED_EVENT_DESC: &[u8; 11] = &[0u8; 11];
+
+#[cfg(has_wldp_blobs)]
 pub const RETAIL_UNLOCKED_EVENT_META: &[u8] = include_bytes!("../data/retail_unlocked_event_meta.bin");
+#[cfg(not(has_wldp_blobs))]
+pub const RETAIL_UNLOCKED_EVENT_META: &[u8] = &[2u8, 0u8];
+
+#[cfg(has_wldp_blobs)]
 pub const HSTI_FAILURE_EVENT_DESC: &[u8; 11] = include_bytes!("../data/hsti_failure_event_desc.bin");
+#[cfg(not(has_wldp_blobs))]
+pub const HSTI_FAILURE_EVENT_DESC: &[u8; 11] = &[0u8; 11];
+
+#[cfg(has_wldp_blobs)]
 pub const HSTI_FAILURE_EVENT_META: &[u8] = include_bytes!("../data/hsti_failure_event_meta.bin");
+#[cfg(not(has_wldp_blobs))]
+pub const HSTI_FAILURE_EVENT_META: &[u8] = &[2u8, 0u8];
+
+#[cfg(has_wldp_blobs)]
 pub const PRODUCTION_EVENT_DESC: &[u8; 11] = include_bytes!("../data/production_event_desc.bin");
+#[cfg(not(has_wldp_blobs))]
+pub const PRODUCTION_EVENT_DESC: &[u8; 11] = &[0u8; 11];
+
+#[cfg(has_wldp_blobs)]
 pub const PRODUCTION_EVENT_META: &[u8] = include_bytes!("../data/production_event_meta.bin");
+#[cfg(not(has_wldp_blobs))]
+pub const PRODUCTION_EVENT_META: &[u8] = &[2u8, 0u8];
 
 pub fn desc_keyword(desc: &[u8; 11]) -> u64 {
     u64::from_le_bytes([desc[3], desc[4], desc[5], desc[6], desc[7], desc[8], desc[9], desc[10]])
@@ -115,6 +177,10 @@ impl Provider {
     }
 
     pub fn register(&'static self) -> i32 {
+        if !cfg!(has_wldp_blobs) {
+            self.register_status.store(0, Ordering::SeqCst);
+            return 0;
+        }
         let mut h = 0u64;
         let st = unsafe { EventRegister(&self.guid, Some(enable_callback), self as *const Provider as *mut c_void, &mut h) };
         self.register_status.store(st, Ordering::SeqCst);
@@ -151,6 +217,9 @@ impl Provider {
     }
 
     pub fn write(&self, desc: &[u8; 11], meta: &[u8], fields: &[EventData]) -> u32 {
+        if !cfg!(has_wldp_blobs) {
+            return 0;
+        }
         let ed = EventDescriptor {
             id: 0,
             version: 0,

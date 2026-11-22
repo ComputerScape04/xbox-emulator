@@ -173,6 +173,9 @@ fn contains(hay: &[u8], needle: &[u8]) -> bool {
 
 #[test]
 fn tracelogging_metadata_matches_console_binary() {
+    if !cfg!(has_wldp_blobs) {
+        return;
+    }
     assert_eq!(tlg::ACTIVITY_META.len(), 71);
     assert_eq!(u16::from_le_bytes([tlg::ACTIVITY_META[0], tlg::ACTIVITY_META[1]]), 71);
     assert!(contains(tlg::ACTIVITY_META, b"Microsoft.Windows.Security.CodeIntegrity.Activity\0"));
@@ -200,6 +203,9 @@ fn tracelogging_metadata_matches_console_binary() {
 
 #[test]
 fn wldp_tracelogging_wdac_block_dialog_shown() {
+    if !cfg!(has_wldp_blobs) {
+        return;
+    }
     let p = tlg::activity();
     assert_eq!(p.register_status.load(std::sync::atomic::Ordering::SeqCst), 0);
     assert_ne!(p.handle.load(std::sync::atomic::Ordering::SeqCst), 0);

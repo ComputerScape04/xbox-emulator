@@ -339,6 +339,9 @@ fn reset_matches_console_export_order() {
 
 #[test]
 fn watermark_tlg_blobs_match_console_image() {
+    if !cfg!(has_wldp_blobs) {
+        return;
+    }
     assert_eq!(tlg::Guid::from_le(tlg::WATERMARK_GUID), tlg::Guid { data1: 0x9a2edb8f, data2: 0x5883, data3: 0x499f, data4: [0xac, 0xed, 0x6e, 0x4b, 0x69, 0xd4, 0x3d, 0xdf] });
     assert_eq!(&tlg::RETAIL_UNLOCKED_EVENT_DESC[..3], &[0x0b, 5, 0]);
     assert_eq!(tlg::desc_keyword(tlg::RETAIL_UNLOCKED_EVENT_DESC), 0x8000_0000_0000);
